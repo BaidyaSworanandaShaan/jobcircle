@@ -1,0 +1,104 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           Int           @id @default(autoincrement())
+  name         String
+  email        String        @unique
+  password     String
+  role         Role          @default(USER)
+  refreshToken String?
+  applications Application[]
+  jobs         Job[]
+  profile      Profile?      @relation(fields: [profileId], references: [id])
+  profileId    Int?          @unique
+}
+
+model Profile {
+  id           Int       @id @default(autoincrement())
+  user         User?     @relation
+  firstName    String
+  lastName     String
+  phone        String
+  address      String
+  city         String
+  country      String
+  bio          String?   @db.LongText
+  dateOfBirth  DateTime?
+  gender       String?
+  education    Json?
+  experience   Json?
+  skills       Json?
+  portfolioURL String?
+  linkedinURL  String?
+  githubURL    String?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}
+
+model Job {
+  id             Int           @id @default(autoincrement())
+  title          String
+  description    String
+  company        String
+  location       String
+  jobType        JobType
+  salaryRange    String? // optional
+  dueDate        DateTime
+  skillsRequired Json
+  experience     String
+  userId         Int
+  postedBy       User          @relation(fields: [userId], references: [id])
+  applications   Application[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Enquiry {
+  id           Int      @id @default(autoincrement())
+  fullName     String
+  emailAddress String
+  subject      String
+  message      String
+  createdAt    DateTime @default(now())
+}
+
+enum JobType {
+  FULL_TIME
+  PART_TIME
+  INTERNSHIP
+  REMOTE
+}
+
+model Application {
+  id        Int               @id @default(autoincrement())
+  jobId     Int
+  userId    Int
+  appliedAt DateTime          @default(now())
+  status    ApplicationStatus @default(APPLIED) // NEW FIELD
+
+  job  Job  @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id])
+
+  @@unique([jobId, userId])
+}
+
+enum Role {
+  ADMIN
+  USER
+}
+
+enum ApplicationStatus {
+  APPLIED
+  INTERVIEW
+  REJECTED
+  HIRED
+}

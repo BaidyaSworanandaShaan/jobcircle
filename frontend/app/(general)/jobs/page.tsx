@@ -1,30 +1,27 @@
 // app/(general)/jobs/page.tsx
+export const dynamic = "force-dynamic";
+
 import JobsList from "@/components/JobList";
 import { Job } from "@/types/Job";
 import React from "react";
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
-// Props for App Router pages
 interface JobsPageProps {
   searchParams?: { [key: string]: string | string[] | undefined };
 }
 
 const fetchJobs = async (): Promise<Job[]> => {
   const res = await fetch(`${BACKEND_URL}/api/jobs`, {
-    // ISR: Revalidate every 60 seconds
     next: { revalidate: 60 },
   });
-
   if (!res.ok) throw new Error("Failed to fetch jobs");
   return res.json();
 };
 
 const Jobs = async ({ searchParams }: JobsPageProps) => {
-  // Handle optional searchParams
   const searchParam =
     typeof searchParams?.search === "string" ? searchParams.search : "";
-
   const jobs = await fetchJobs();
 
   return (

@@ -7,7 +7,8 @@ interface JobDetailProps {
   params: { id: string };
 }
 
-const formatDate = (dateString: string) => {
+const formatDate = (dateString?: string) => {
+  if (!dateString) return "N/A";
   return new Date(dateString).toLocaleDateString("en-US", {
     year: "numeric",
     month: "long",
@@ -18,18 +19,30 @@ const formatDate = (dateString: string) => {
 export default async function JobDetail({ params }: JobDetailProps) {
   const { id } = params;
   let job: Job | null = null;
+
   try {
     const res = await fetch(`${BACKEND_URL}/api/jobs/${id}`, {
       next: { revalidate: 60 },
     });
 
-    if (!res.ok) {
-      console.error("Failed to fetch job, status:", res.status);
-    } else {
+    if (res.ok) {
       job = await res.json();
+    } else {
+      console.error("Failed to fetch job, status:", res.status);
     }
   } catch (err) {
     console.error("Error fetching job:", err);
+  }
+
+  if (!job) {
+    return (
+      <div className="pt-28 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 text-center">
+        <h1 className="text-3xl font-bold text-foreground">Job not found</h1>
+        <p className="text-muted-foreground mt-2">
+          Unable to load job details.
+        </p>
+      </div>
+    );
   }
 
   return (
@@ -37,30 +50,30 @@ export default async function JobDetail({ params }: JobDetailProps) {
       {/* Header */}
       <div className="mb-8">
         <h1 className="text-4xl font-semibold text-foreground mb-2">
-          {job?.title}
+          {job.title}
         </h1>
-        <p className="text-lg text-muted-foreground">{job?.company}</p>
+        <p className="text-lg text-muted-foreground">{job.company}</p>
       </div>
 
       {/* Meta Info */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 mb-8 p-4 bg-card border border-border rounded-lg">
         <div>
           <p className="text-sm text-muted-foreground mb-1">Location</p>
-          <p className="font-semibold text-foreground">{job?.location}</p>
+          <p className="font-semibold text-foreground">{job.location}</p>
         </div>
         <div>
           <p className="text-sm text-muted-foreground mb-1">Job Type</p>
-          <p className="font-semibold text-foreground">{job?.jobType}</p>
+          <p className="font-semibold text-foreground">{job.jobType}</p>
         </div>
         <div>
           <p className="text-sm text-muted-foreground mb-1">Salary</p>
           <p className="font-semibold text-foreground">
-            $ {job?.salaryRange || "Negotiable"}
+            $ {job.salaryRange || "Negotiable"}
           </p>
         </div>
         <div>
           <p className="text-sm text-muted-foreground mb-1">Experience</p>
-          <p className="font-semibold text-foreground">{job?.experience}</p>
+          <p className="font-semibold text-foreground">{job.experience}</p>
         </div>
       </div>
 
@@ -69,7 +82,7 @@ export default async function JobDetail({ params }: JobDetailProps) {
         <h2 className="text-2xl font-semibold text-foreground mb-4">
           About the Role
         </h2>
-        <p className="text-foreground leading-relaxed">{job?.description}</p>
+        <p className="text-foreground leading-relaxed">{job.description}</p>
       </section>
 
       {/* Skills */}
@@ -78,8 +91,8 @@ export default async function JobDetail({ params }: JobDetailProps) {
           Required Skills
         </h2>
         <div className="flex flex-wrap gap-2">
-          {Array.isArray(job?.skillsRequired) &&
-            job?.skillsRequired.map((skill: string, idx: number) => (
+          {Array.isArray(job.skillsRequired) &&
+            job.skillsRequired.map((skill, idx) => (
               <span
                 key={idx}
                 className="px-3 py-1 bg-purple-50 text-purple-600 rounded-full text-sm"
@@ -97,15 +110,17 @@ export default async function JobDetail({ params }: JobDetailProps) {
             Application Deadline
           </p>
           <p className="text-lg font-semibold text-foreground">
-            {formatDate(job?.dueDate)}
+            {formatDate(job.dueDate)}
           </p>
         </div>
       </section>
 
       {/* Apply Button */}
-      <div className="mt-4">
-        <ApplyButton jobId={job?.id} />
-      </div>
+      {job.id && (
+        <div className="mt-4">
+          <ApplyButton jobId={job.id} />
+        </div>
+      )}
     </div>
   );
 }

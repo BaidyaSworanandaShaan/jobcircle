@@ -1,4 +1,5 @@
 // app/jobs/[id]/page.tsx
+export const dynamic = "force-dynamic";
 import { Job } from "@/types/Job";
 import ApplyButton from "@/components/ApplyButton";
 

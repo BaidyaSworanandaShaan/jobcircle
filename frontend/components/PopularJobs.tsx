@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import { Job } from "@/types/Job";
 import Link from "next/link";
 import JobCards from "./JobCards";

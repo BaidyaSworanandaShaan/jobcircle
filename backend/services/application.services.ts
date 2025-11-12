@@ -6,7 +6,7 @@ export const createApplication = async (userId: number, jobId: number) => {
     throw new Error("Missing user or job ID");
   }
 
-  // Check if the user has already applied
+  // Check if user has already applied
   const existingApplication = await prisma.application.findUnique({
     where: {
       jobId_userId: {
@@ -22,10 +22,7 @@ export const createApplication = async (userId: number, jobId: number) => {
 
   // Create a new application
   const application = await prisma.application.create({
-    data: {
-      userId,
-      jobId,
-    },
+    data: { userId, jobId },
   });
 
   return application;
@@ -51,7 +48,7 @@ export const getApplicationsForUser = async (userId: number) => {
     orderBy: { appliedAt: "desc" },
   });
 
-  return applications.map((app) => ({
+  return applications.map((app: any) => ({
     applicationId: app.id,
     job: app.job,
     appliedAt: app.appliedAt,
@@ -61,16 +58,10 @@ export const getApplicationsForUser = async (userId: number) => {
 
 export const getAllApplications = async () => {
   const applications = await prisma.application.findMany({
-    orderBy: {
-      appliedAt: "desc",
-    },
+    orderBy: { appliedAt: "desc" },
     include: {
       user: {
-        select: {
-          id: true,
-          name: true,
-          email: true,
-        },
+        select: { id: true, name: true, email: true },
       },
       job: {
         select: {
@@ -104,12 +95,12 @@ export const getAllApplications = async () => {
       name: string;
       email: string;
       appliedAt: Date;
-      status?: "APPLIED" | "INTERVIEW" | "REJECTED" | "HIRED"; // added status
+      status?: "APPLIED" | "INTERVIEW" | "REJECTED" | "HIRED";
     }[];
   }
 
-  const grouped = applications.reduce<Record<number, GroupedJob>>(
-    (acc, app) => {
+  const grouped = applications.reduce(
+    (acc: Record<number, GroupedJob>, app: any) => {
       const jobId = app.job.id;
 
       if (!acc[jobId]) {
@@ -125,7 +116,7 @@ export const getAllApplications = async () => {
         name: app.user.name,
         email: app.user.email,
         appliedAt: app.appliedAt,
-        status: app.status ?? "APPLIED", // include status, default to "APPLIED"
+        status: app.status ?? "APPLIED",
       });
 
       return acc;
@@ -142,25 +133,23 @@ export const getApplicationsByJobId = async (jobId: number) => {
     include: { user: true },
   });
 
-  return applications.map((app) => ({
+  return applications.map((app: any) => ({
     id: app.user.id,
     name: app.user.name,
     email: app.user.email,
   }));
 };
+
 export const callApplicantForInterview = async (applicationId: number) => {
   if (!applicationId) throw new Error("Application ID is required");
+
   try {
     const updatedApplication = await prisma.application.update({
       where: { id: applicationId },
       data: { status: "INTERVIEW" },
       include: {
-        user: {
-          select: { id: true, name: true, email: true },
-        },
-        job: {
-          select: { id: true, title: true, company: true },
-        },
+        user: { select: { id: true, name: true, email: true } },
+        job: { select: { id: true, title: true, company: true } },
       },
     });
 

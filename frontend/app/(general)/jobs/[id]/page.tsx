@@ -17,6 +17,7 @@ const formatDate = (dateString: string) => {
 
 export default async function JobDetail({ params }: JobDetailProps) {
   const { id } = params;
+  let job: Job | null = null;
   try {
     const res = await fetch(`${BACKEND_URL}/api/jobs/${id}`, {
       next: { revalidate: 60 },

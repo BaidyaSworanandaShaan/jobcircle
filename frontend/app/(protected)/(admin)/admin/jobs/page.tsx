@@ -1,5 +1,3 @@
-export const dynamic = "force-dynamic";
-
 import AdminSearchJob from "@/components/Dashboard/Admin/AdminSearchJob";
 import React from "react";
 

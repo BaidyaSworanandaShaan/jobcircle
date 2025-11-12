@@ -1,5 +1,3 @@
-// app/jobs/[id]/page.tsx
-export const dynamic = "force-dynamic";
 import { Job } from "@/types/Job";
 import ApplyButton from "@/components/ApplyButton";
 
@@ -19,14 +17,19 @@ const formatDate = (dateString: string) => {
 
 export default async function JobDetail({ params }: JobDetailProps) {
   const { id } = params;
+  try {
+    const res = await fetch(`${BACKEND_URL}/api/jobs/${id}`, {
+      next: { revalidate: 60 },
+    });
 
-  const res = await fetch(`${BACKEND_URL}/api/jobs/${id}`, {
-    next: { revalidate: 60 },
-  });
-
-  if (!res.ok) throw new Error("Failed to fetch job");
-
-  const job: Job = await res.json();
+    if (!res.ok) {
+      console.error("Failed to fetch job, status:", res.status);
+    } else {
+      job = await res.json();
+    }
+  } catch (err) {
+    console.error("Error fetching job:", err);
+  }
 
   return (
     <div className="pt-28 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">

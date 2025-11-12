@@ -1,5 +1,3 @@
-export const dynamic = "force-dynamic";
-
 import About from "@/components/About";
 import CallToAction from "@/components/CallToAction";
 import Hero from "@/components/Hero";

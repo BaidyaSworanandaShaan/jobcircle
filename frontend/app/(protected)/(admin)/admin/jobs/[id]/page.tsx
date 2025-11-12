@@ -1,6 +1,4 @@
-export const dynamic = "force-dynamic";
 import { Job } from "@/types/Job";
-
 import Applicants from "@/components/Dashboard/Admin/Applicants";
 import AdminDeleteButton from "@/components/Dashboard/Admin/AdminDeleteButton";
 
@@ -19,15 +17,35 @@ const formatDate = (dateString: string) => {
 };
 
 export default async function JobDetail({ params }: JobDetailProps) {
-  const { id } = await params;
+  const { id } = params;
 
-  const res = await fetch(`${BACKEND_URL}/api/jobs/${id}`, {
-    next: { revalidate: 60 },
-  });
+  let job: Job | null = null;
 
-  if (!res.ok) throw new Error("Failed to fetch job");
+  try {
+    const res = await fetch(`${BACKEND_URL}/api/jobs/${id}`, {
+      next: { revalidate: 60 }, // ISR: rebuild every 60s
+    });
 
-  const job: Job = await res.json();
+    if (!res.ok) throw new Error("Failed to fetch job");
+
+    job = await res.json();
+  } catch (error) {
+    console.error("Error fetching job:", error);
+    // fallback: you can either return null, empty object, or show a message
+  }
+
+  if (!job) {
+    return (
+      <div className="pt-28 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 text-center">
+        <h1 className="text-3xl font-semibold text-foreground mb-4">
+          Job not found
+        </h1>
+        <p className="text-muted-foreground">
+          There was an issue fetching the job details. Please try again later.
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="pt-28 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
@@ -75,7 +93,7 @@ export default async function JobDetail({ params }: JobDetailProps) {
           Required Skills
         </h2>
         <div className="flex flex-wrap gap-2">
-          {Array.isArray(job?.skillsRequired) &&
+          {Array.isArray(job.skillsRequired) &&
             job.skillsRequired.map((skill: string, idx: number) => (
               <span
                 key={idx}

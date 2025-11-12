@@ -1,16 +1,25 @@
-export const dynamic = "force-dynamic";
 import { Job } from "@/types/Job";
 import Link from "next/link";
 import JobCards from "./JobCards";
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 export default async function PopularJobs() {
-  // Fetch jobs from your backend API with ISR
-  const res = await fetch(`${BACKEND_URL}/api/jobs`, {
-    next: { revalidate: 60 }, // re-generate every 60 seconds
-  });
-  if (!res.ok) throw new Error("Failed to fetch jobs");
-  const jobs: Job[] = await res.json();
+  let jobs: Job[] = [];
+
+  try {
+    const res = await fetch(`${BACKEND_URL}/api/jobs`, {
+      next: { revalidate: 60 }, // ISR: revalidate every 60 seconds
+    });
+
+    if (!res.ok) {
+      console.error("Failed to fetch jobs, status:", res.status);
+    } else {
+      jobs = await res.json();
+    }
+  } catch (err) {
+    console.error("Error fetching jobs:", err);
+  }
+
   return (
     <section id="jobs" className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
       <div className="max-w-6xl mx-auto">

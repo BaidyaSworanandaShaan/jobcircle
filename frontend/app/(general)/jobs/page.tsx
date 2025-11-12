@@ -1,6 +1,3 @@
-// app/(general)/jobs/page.tsx
-export const dynamic = "force-dynamic";
-
 import JobsList from "@/components/JobList";
 import { Job } from "@/types/Job";
 import React from "react";
@@ -12,11 +9,21 @@ interface JobsPageProps {
 }
 
 const fetchJobs = async (): Promise<Job[]> => {
-  const res = await fetch(`${BACKEND_URL}/api/jobs`, {
-    next: { revalidate: 60 },
-  });
-  if (!res.ok) throw new Error("Failed to fetch jobs");
-  return res.json();
+  try {
+    const res = await fetch(`${BACKEND_URL}/api/jobs`, {
+      next: { revalidate: 60 }, // caching still works
+    });
+
+    if (!res.ok) {
+      console.error("Failed to fetch jobs, status:", res.status);
+      return []; // fallback
+    }
+
+    return await res.json();
+  } catch (err) {
+    console.error("Error fetching jobs:", err);
+    return []; // fallback
+  }
 };
 
 const Jobs = async ({ searchParams }: JobsPageProps) => {

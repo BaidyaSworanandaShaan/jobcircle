@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import { Job } from "@/types/Job";
 
 import Applicants from "@/components/Dashboard/Admin/Applicants";

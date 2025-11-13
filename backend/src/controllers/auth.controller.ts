@@ -25,7 +25,7 @@ const refreshTokenCookieOptions = (): CookieOptions => ({
   secure: isProduction,
   sameSite: isProduction ? "none" : "lax",
   path: "/",
-  domain: isProduction ? ".jobcircle.vercel.app" : undefined,
+  domain: undefined,
   maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
 });
 
@@ -35,7 +35,7 @@ const roleCookieOptions = (): CookieOptions => ({
   secure: isProduction,
   sameSite: isProduction ? "none" : "lax",
   path: "/",
-  domain: isProduction ? ".jobcircle.vercel.app" : undefined,
+  domain: undefined,
   maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
 });
 

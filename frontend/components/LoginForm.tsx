@@ -48,7 +48,14 @@ export default function LoginForm() {
         type: "success",
         text: response.data.message || "Login successful!",
       });
-      router.replace(userRole === "ADMIN" ? "/admin/dashboard" : "/dashboard");
+
+      setTimeout(() => {
+        if (userRole === "ADMIN") {
+          router.push("/admin/dashboard");
+        } else {
+          router.push("/dashboard");
+        }
+      }, 1000);
     } catch (error: unknown) {
       if (axios.isAxiosError(error) && error.response) {
         setMessage({

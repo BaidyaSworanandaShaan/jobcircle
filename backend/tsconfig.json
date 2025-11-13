@@ -9,7 +9,12 @@
     "skipLibCheck": true,
     "moduleResolution": "node",
     "resolveJsonModule": true,
-    "types": ["node", "express"]
+    "types": ["node", "express"],
+    "baseUrl": "src",
+    "paths": {
+      "@lib/*": ["lib/*"],
+      "@routes/*": ["routes/*"]
+    }
   },
   "include": ["src/**/*.ts"], // include all TS files in src
   "exclude": ["node_modules", "dist"]

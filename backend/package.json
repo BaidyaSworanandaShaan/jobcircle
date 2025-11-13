@@ -3,10 +3,10 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "dev": "ts-node-dev server.ts",
+    "dev": "ts-node-dev -r tsconfig-paths/register src/server.ts",
     "postinstall": "prisma generate --schema ./src/prisma/schema.prisma",
     "build": "prisma generate --schema ./src/prisma/schema.prisma && tsc",
-    "start": "node dist/server.js"
+    "start": "prisma generate --schema ./src/prisma/schema.prisma && node dist/server.js"
   },
   "keywords": [],
   "author": "",

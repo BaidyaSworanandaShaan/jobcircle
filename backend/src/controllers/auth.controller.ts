@@ -9,31 +9,35 @@ import {
 // Detect production
 const isProduction = process.env.NODE_ENV === "production";
 
-// Unified cookie options
-const getCookieOptions = (
-  overrides: Partial<{
-    maxAge: number;
-  }> = {}
-) => {
-  const baseOptions = isProduction
-    ? {
-        httpOnly: true,
-        secure: true,
-        sameSite: "none" as const,
-        path: "/",
-        domain: ".jobcircle.vercel.app",
-        maxAge: 7 * 24 * 60 * 60 * 1000,
-      }
-    : {
-        httpOnly: true,
-        secure: false,
-        sameSite: "lax" as const,
-        path: "/",
-        maxAge: 7 * 24 * 60 * 60 * 1000,
-      };
+// Type-safe cookie options interface
+interface CookieOptions {
+  httpOnly?: boolean;
+  secure?: boolean;
+  sameSite?: "lax" | "strict" | "none";
+  path?: string;
+  maxAge?: number;
+  domain?: string;
+}
 
-  return { ...baseOptions, ...overrides };
-};
+// Refresh token cookie options (secure, httpOnly)
+const refreshTokenCookieOptions = (): CookieOptions => ({
+  httpOnly: true,
+  secure: isProduction,
+  sameSite: isProduction ? "none" : "lax",
+  path: "/",
+  domain: isProduction ? ".jobcircle.vercel.app" : undefined,
+  maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+});
+
+// Role cookie options (readable by frontend)
+const roleCookieOptions = (): CookieOptions => ({
+  httpOnly: false,
+  secure: isProduction,
+  sameSite: isProduction ? "none" : "lax",
+  path: "/",
+  domain: isProduction ? ".jobcircle.vercel.app" : undefined,
+  maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+});
 
 export const register = async (req: Request, res: Response) => {
   try {
@@ -44,7 +48,8 @@ export const register = async (req: Request, res: Response) => {
       password
     );
 
-    res.cookie("refreshToken", refreshToken, getCookieOptions());
+    res.cookie("refreshToken", refreshToken, refreshTokenCookieOptions());
+    res.cookie("role", user.role, roleCookieOptions());
 
     const { password: _pw, refreshToken: _rt, ...safeUser } = user;
     res.json({ user: safeUser, accessToken });
@@ -61,8 +66,8 @@ export const login = async (req: Request, res: Response) => {
       password
     );
 
-    res.cookie("refreshToken", refreshToken, getCookieOptions());
-    res.cookie("role", user.role, getCookieOptions());
+    res.cookie("refreshToken", refreshToken, refreshTokenCookieOptions());
+    res.cookie("role", user.role, roleCookieOptions());
 
     const { password: _pw, refreshToken: _rt, ...safeUser } = user;
     res.json({ user: safeUser, accessToken });
@@ -73,10 +78,7 @@ export const login = async (req: Request, res: Response) => {
 
 export const refreshToken = async (req: Request, res: Response) => {
   const token = req.cookies.refreshToken;
-
-  if (!token) {
-    return res.status(401).json({ message: "No token provided" });
-  }
+  if (!token) return res.status(401).json({ message: "No token provided" });
 
   try {
     const { accessToken, user } = await refreshAccessToken(token);
@@ -93,9 +95,8 @@ export const refreshToken = async (req: Request, res: Response) => {
   } catch (error) {
     console.error("Invalid refresh token:", error);
 
-    // Clear cookies on invalid token
-    res.clearCookie("refreshToken", getCookieOptions());
-    res.clearCookie("role", getCookieOptions());
+    res.clearCookie("refreshToken", refreshTokenCookieOptions());
+    res.clearCookie("role", roleCookieOptions());
 
     return res.status(401).json({ message: "Invalid or expired token" });
   }
@@ -107,9 +108,8 @@ export const logout = async (req: Request, res: Response) => {
   try {
     if (token) await logoutUser(token);
 
-    // Clear cookies
-    res.clearCookie("refreshToken", getCookieOptions());
-    res.clearCookie("role", getCookieOptions());
+    res.clearCookie("refreshToken", refreshTokenCookieOptions());
+    res.clearCookie("role", roleCookieOptions());
 
     res.json({ message: "Logged out successfully" });
   } catch (error) {

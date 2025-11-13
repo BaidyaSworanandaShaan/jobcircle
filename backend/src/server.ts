@@ -1,12 +1,12 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import authRoutes from "./routes/auth.routes";
-import jobRoutes from "./routes/job.routes";
-import applicationRoutes from "./routes/application.routes";
-import userRoutes from "./routes/user.routes";
-import enquiryRoutes from "./routes/enquiry.routes";
-import adminRoutes from "./routes/admin.routes";
+import authRoutes from "./src/routes/auth.routes";
+import jobRoutes from "./src/routes/job.routes";
+import applicationRoutes from "./src/routes/application.routes";
+import userRoutes from "./src/routes/user.routes";
+import enquiryRoutes from "./src/routes/enquiry.routes";
+import adminRoutes from "./src/routes/admin.routes";
 import cookieParser from "cookie-parser";
 
 dotenv.config();

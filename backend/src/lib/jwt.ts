@@ -1,6 +1,6 @@
 // lib/jwt.ts
 import jwt from "jsonwebtoken";
-import { User } from "../generated/prisma";
+import { User } from "../../generated/prisma";
 
 const ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET;
 const REFRESH_SECRET = process.env.REFRESH_TOKEN_SECRET;

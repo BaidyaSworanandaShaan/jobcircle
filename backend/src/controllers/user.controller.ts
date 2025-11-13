@@ -134,7 +134,7 @@ export const getUserStats = async (req: Request, res: Response) => {
 export const getCurrentUserController = async (req: Request, res: Response) => {
   try {
     const token = req.cookies?.refreshToken;
-    console.log("Token", token);
+
     const user = await getCurrentUserService(token);
     res.json(user);
   } catch (err: any) {

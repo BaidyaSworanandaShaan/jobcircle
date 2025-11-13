@@ -15,11 +15,10 @@ const app = express();
 app.use(cookieParser());
 const PORT = process.env.PORT || 5000;
 
-// Allow multiple origins
-const allowedOrigins = (
-  process.env.FRONTEND_URLS ||
-  "http://localhost:3000,https://jobcircle.vercel.app"
-).split(","); // split CSV list
+const allowedOrigins = [
+  "http://localhost:3000",
+  "https://jobcircle.vercel.app",
+];
 
 app.use(
   cors({

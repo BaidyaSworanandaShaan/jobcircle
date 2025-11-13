@@ -18,21 +18,15 @@ const app = (0, express_1.default)();
 app.use((0, cookie_parser_1.default)());
 const PORT = process.env.PORT || 5000;
 // Allow multiple origins
-const allowedOrigins = [
-    "http://localhost:3000", // local dev
-    "https://jobcircle.vercel.app", // production frontend
-];
+const allowedOrigins = (process.env.FRONTEND_URLS ||
+    "http://localhost:3000,https://jobcircle.vercel.app").split(","); // split CSV list
 app.use((0, cors_1.default)({
     origin: function (origin, callback) {
-        // allow requests with no origin (like Postman)
         if (!origin)
             return callback(null, true);
-        if (allowedOrigins.includes(origin)) {
+        if (allowedOrigins.includes(origin))
             return callback(null, true);
-        }
-        else {
-            return callback(new Error("Not allowed by CORS"));
-        }
+        return callback(new Error("CORS not allowed"));
     },
     credentials: true,
 }));

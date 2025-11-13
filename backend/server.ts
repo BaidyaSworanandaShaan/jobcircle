@@ -7,7 +7,6 @@ import applicationRoutes from "./routes/application.routes";
 import userRoutes from "./routes/user.routes";
 import enquiryRoutes from "./routes/enquiry.routes";
 import adminRoutes from "./routes/admin.routes";
-
 import cookieParser from "cookie-parser";
 
 dotenv.config();
@@ -16,12 +15,23 @@ const app = express();
 app.use(cookieParser());
 const PORT = process.env.PORT || 5000;
 
+// Allow multiple origins
+const allowedOrigins = (
+  process.env.FRONTEND_URLS ||
+  "http://localhost:3000,https://jobcircle.vercel.app"
+).split(","); // split CSV list
+
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL || "https://jobcircle.vercel.app",
+    origin: function (origin, callback) {
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.includes(origin)) return callback(null, true);
+      return callback(new Error("CORS not allowed"));
+    },
     credentials: true,
   })
 );
+
 app.use(express.json());
 
 app.use("/api/auth", authRoutes);

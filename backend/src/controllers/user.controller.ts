@@ -134,11 +134,9 @@ export const getUserStats = async (req: Request, res: Response) => {
 export const getCurrentUserController = async (req: Request, res: Response) => {
   try {
     const token = req.cookies?.refreshToken;
-
     const user = await getCurrentUserService(token);
     res.json(user);
   } catch (err: any) {
-    console.error(err);
     res.status(401).json({ message: err.message || "Unauthorized" });
   }
 };

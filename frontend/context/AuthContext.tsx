@@ -41,15 +41,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         setAccessToken(res.data.accessToken);
 
         setUser(res.data.user);
-      } catch {
+      } catch (error) {
         setAccessToken(null);
         setUser(null);
+        console.log("Error on calling refresh-token", error);
       } finally {
         setLoading(false);
       }
     };
     refreshAccessToken();
-  }, [accessToken]);
+  }, []);
 
   const login = (token: string, userData: User) => {
     setAccessToken(token);

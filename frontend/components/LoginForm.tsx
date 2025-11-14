@@ -49,13 +49,14 @@ export default function LoginForm() {
         text: response.data.message || "Login successful!",
       });
 
-      setTimeout(() => {
-        if (userRole === "ADMIN") {
-          router.push("/admin/dashboard");
-        } else {
-          router.push("/dashboard");
-        }
-      }, 1000);
+      // setTimeout(() => {
+
+      // }, 1000);
+      if (userRole === "ADMIN") {
+        router.push("/admin/dashboard");
+      } else {
+        router.push("/dashboard");
+      }
     } catch (error: unknown) {
       if (axios.isAxiosError(error) && error.response) {
         setMessage({

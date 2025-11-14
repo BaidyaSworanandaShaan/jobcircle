@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { Application } from "@/types/Profile";
+import ProtectedRoute from "@/components/ProtectedRoute";
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
@@ -50,65 +51,67 @@ const Applications = () => {
   if (loading) return <p className="pt-28 text-center">Loading...</p>;
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-16 pt-28">
-      <h1 className="text-2xl font-semibold mb-6">Your Applications</h1>
+    <ProtectedRoute allowedRoles={["USER"]}>
+      <div className="max-w-6xl mx-auto px-4 py-16 pt-28">
+        <h1 className="text-2xl font-semibold mb-6">Your Applications</h1>
 
-      {/* Search Input */}
-      <div className="mb-6">
-        <input
-          type="text"
-          placeholder="Search by job title, company, or location..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-400"
-        />
-      </div>
-
-      {filteredApps.length === 0 ? (
-        <p className="text-center text-gray-600">No applications found.</p>
-      ) : (
-        <div className="space-y-4">
-          {filteredApps.map((app) => (
-            <div
-              key={app.applicationId}
-              className="rounded-xl border bg-white border-gray-100 p-5 shadow-sm transition hover:shadow-md"
-            >
-              <div className="flex justify-between items-center">
-                <div>
-                  <h2 className="text-lg font-semibold text-gray-800">
-                    {app.job.title}
-                  </h2>
-                  <p className="text-sm text-gray-600">
-                    {app.job.company} • {app.job.location}
-                  </p>
-                  <p className="text-xs text-gray-400">
-                    Applied:{" "}
-                    {new Date(app.appliedAt).toLocaleDateString("en-GB", {
-                      day: "2-digit",
-                      month: "short",
-                      year: "numeric",
-                    })}
-                  </p>
-                </div>
-                <span
-                  className={`px-2 py-1 text-xs font-semibold rounded-lg ${
-                    app.status === "APPLIED"
-                      ? "bg-gray-200 text-gray-800"
-                      : app.status === "INTERVIEW"
-                      ? "bg-green-100 text-green-800"
-                      : app.status === "REJECTED"
-                      ? "bg-red-100 text-red-800"
-                      : "bg-blue-100 text-blue-800"
-                  }`}
-                >
-                  {app.status}
-                </span>
-              </div>
-            </div>
-          ))}
+        {/* Search Input */}
+        <div className="mb-6">
+          <input
+            type="text"
+            placeholder="Search by job title, company, or location..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-400"
+          />
         </div>
-      )}
-    </div>
+
+        {filteredApps.length === 0 ? (
+          <p className="text-center text-gray-600">No applications found.</p>
+        ) : (
+          <div className="space-y-4">
+            {filteredApps.map((app) => (
+              <div
+                key={app.applicationId}
+                className="rounded-xl border bg-white border-gray-100 p-5 shadow-sm transition hover:shadow-md"
+              >
+                <div className="flex justify-between items-center">
+                  <div>
+                    <h2 className="text-lg font-semibold text-gray-800">
+                      {app.job.title}
+                    </h2>
+                    <p className="text-sm text-gray-600">
+                      {app.job.company} • {app.job.location}
+                    </p>
+                    <p className="text-xs text-gray-400">
+                      Applied:{" "}
+                      {new Date(app.appliedAt).toLocaleDateString("en-GB", {
+                        day: "2-digit",
+                        month: "short",
+                        year: "numeric",
+                      })}
+                    </p>
+                  </div>
+                  <span
+                    className={`px-2 py-1 text-xs font-semibold rounded-lg ${
+                      app.status === "APPLIED"
+                        ? "bg-gray-200 text-gray-800"
+                        : app.status === "INTERVIEW"
+                        ? "bg-green-100 text-green-800"
+                        : app.status === "REJECTED"
+                        ? "bg-red-100 text-red-800"
+                        : "bg-blue-100 text-blue-800"
+                    }`}
+                  >
+                    {app.status}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </ProtectedRoute>
   );
 };
 

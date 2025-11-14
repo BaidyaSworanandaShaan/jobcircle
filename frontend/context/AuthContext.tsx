@@ -1,8 +1,8 @@
-// context/AuthContext.tsx
 "use client";
 
 import { createContext, useContext, useState, useEffect } from "react";
 import axios from "axios";
+import { usePathname, useRouter } from "next/navigation";
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
@@ -28,7 +28,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // Refresh token on app start
+  const pathname = usePathname();
+  const router = useRouter();
+
   useEffect(() => {
     const refreshAccessToken = async () => {
       try {
@@ -37,20 +39,43 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           {},
           { withCredentials: true }
         );
-        console.log("ACCESSTOKEN", res.data);
-        setAccessToken(res.data.accessToken);
 
+        setAccessToken(res.data.accessToken);
         setUser(res.data.user);
+
+        const role = res.data.user.role;
+
+        // ---- ROLE BASED REDIRECTION ----
+
+        if (!role) {
+          router.replace("/login");
+          return;
+        }
+
+        if (pathname.startsWith("/admin") && role !== "ADMIN") {
+          router.replace("/dashboard");
+          return;
+        }
+
+        if (pathname.startsWith("/dashboard") && role === "ADMIN") {
+          router.replace("/admin/dashboard");
+          return;
+        }
       } catch (error) {
+        console.log("Error refreshing token", error);
         setAccessToken(null);
         setUser(null);
-        console.log("Error on calling refresh-token", error);
+
+        if (!pathname.startsWith("/login")) {
+          router.replace("/login");
+        }
       } finally {
         setLoading(false);
       }
     };
+
     refreshAccessToken();
-  }, []);
+  }, [pathname]);
 
   const login = (token: string, userData: User) => {
     setAccessToken(token);
@@ -66,7 +91,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       );
       setAccessToken(null);
       setUser(null);
-      window.location.href = "/login";
+      router.replace("/login");
     } catch (err) {
       console.error("Logout error:", err);
     }

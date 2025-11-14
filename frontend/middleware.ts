@@ -3,16 +3,16 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 export function middleware(req: NextRequest) {
-  const refreshToken = req.cookies.get("refreshToken")?.value;
+  //const refreshToken = req.cookies.get("refreshToken")?.value;
   const role = req.cookies.get("role")?.value;
 
   const url = req.nextUrl.clone();
 
   // If no refresh token, redirect to login
-  if (!refreshToken) {
-    url.pathname = "/login";
-    return NextResponse.redirect(url);
-  }
+  // if (!refreshToken) {
+  //   url.pathname = "/login";
+  //   return NextResponse.redirect(url);
+  // }
 
   // Admin routes
   if (url.pathname.startsWith("/admin")) {

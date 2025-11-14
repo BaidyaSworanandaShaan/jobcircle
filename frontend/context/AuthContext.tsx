@@ -49,7 +49,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       }
     };
     refreshAccessToken();
-  }, []);
+  }, [accessToken]);
 
   const login = (token: string, userData: User) => {
     setAccessToken(token);

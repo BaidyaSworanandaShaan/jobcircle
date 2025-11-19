@@ -46,12 +46,13 @@ model Profile {
 model Job {
   id             Int          @id @default(autoincrement())
   title          String
-  description    String 
+ description String @db.Text
+
   company        String
   location       String
   jobType        JobType
   salaryRange    String?   // optional
-  dueDate        DateTime     
+  dueDate        DateTime?     
   skillsRequired String   @db.Text  
   experience     String
   userId         Int

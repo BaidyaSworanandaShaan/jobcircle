@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
+import Image from "next/image";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -25,11 +26,16 @@ export default function Navbar() {
       <div className="max-w-6xl mx-auto px-4 py-2 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
-          <div className="flex-shrink-0">
-            <Link href="/">
-              <span className="text-2xl font-bold text-blue-600 tracking-wide">
-                @JobCircle
-              </span>
+          <div className="">
+            <Link href="/" className="flex items-center">
+              <Image
+                src="/favicon.png"
+                alt="JobCircle Logo"
+                height={45}
+                width={45}
+                className="object-contain"
+                priority
+              />
             </Link>
           </div>
 

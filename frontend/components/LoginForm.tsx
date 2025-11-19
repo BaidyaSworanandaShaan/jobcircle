@@ -92,9 +92,14 @@ export default function LoginForm() {
         <div className="w-full max-w-md mx-auto">
           <div className="text-center mb-6">
             <Link href="/">
-              <span className="text-2xl font-semibold text-blue-600 hover:text-blue-700 cursor-pointer">
-                @JobCircle
-              </span>
+              <Image
+                src="/favicon.png"
+                alt="JobCircle Logo"
+                height={45}
+                width={45}
+                className="object-contain"
+                priority
+              />
             </Link>
           </div>
 

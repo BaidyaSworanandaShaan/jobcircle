@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   title: "Job Circle",
   description: "Find jobs, hire talent, and connect faster with Job Circle.",
   icons: {
-    icon: "/favicon.svg",
+    icon: "/favicon.png",
   },
 };
 

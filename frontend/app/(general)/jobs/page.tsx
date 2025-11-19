@@ -11,18 +11,18 @@ interface JobsPageProps {
 const fetchJobs = async (): Promise<Job[]> => {
   try {
     const res = await fetch(`${BACKEND_URL}/api/jobs`, {
-      next: { revalidate: 60 }, // caching still works
+      next: { revalidate: 10 },
     });
 
     if (!res.ok) {
       console.error("Failed to fetch jobs, status:", res.status);
-      return []; // fallback
+      return [];
     }
 
     return await res.json();
   } catch (err) {
     console.error("Error fetching jobs:", err);
-    return []; // fallback
+    return [];
   }
 };
 

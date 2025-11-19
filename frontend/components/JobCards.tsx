@@ -32,7 +32,7 @@ const JobCards: React.FC<JobCardsProps> = ({ jobs }) => {
           {/* Bottom Row: Salary & View Detail */}
           <div className="flex items-center justify-between pt-4 border-t border-gray-200">
             <span className="text-blue-600 font-semibold">
-              ${job.salaryRange}
+              {job.salaryRange}
             </span>
             <Link href={`/jobs/${job.id}`}>
               <button className="px-4 py-2 rounded-lg text-white font-semibold bg-blue-600 hover:bg-blue-700">

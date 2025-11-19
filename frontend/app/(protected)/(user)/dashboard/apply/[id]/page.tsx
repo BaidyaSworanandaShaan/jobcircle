@@ -293,7 +293,7 @@ const DashboardApplication = () => {
             {openSections.skills && (
               <div className="pl-2 flex flex-wrap gap-2">
                 {profile.skills.length ? (
-                  profile.skills.map((skill, idx) => (
+                  profile.skills.map((skill: string, idx: number) => (
                     <span
                       key={idx}
                       className="bg-blue-100 text-blue-700 px-2 py-1 rounded-md text-sm"

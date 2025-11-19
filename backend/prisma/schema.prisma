@@ -52,7 +52,7 @@ model Job {
   jobType        JobType
   salaryRange    String?   // optional
   dueDate        DateTime     
-  skillsRequired Json   
+  skillsRequired String   @db.Text  
   experience     String
   userId         Int
   postedBy       User         @relation(fields: [userId], references: [id])

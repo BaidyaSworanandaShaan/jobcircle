@@ -8,7 +8,7 @@ export interface Job {
   jobType: "FULL_TIME" | "PART_TIME" | "INTERNSHIP" | "REMOTE";
   salaryRange?: string;
   dueDate: string; // ISO string
-  skillsRequired: JSON;
+  skillsRequired: string;
   experience: string;
   userId: number;
   postedBy: {

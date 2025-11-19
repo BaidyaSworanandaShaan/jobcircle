@@ -17,7 +17,7 @@ const formatDate = (dateString: string) => {
 };
 
 export default async function JobDetail({ params }: JobDetailProps) {
-  const { id } = params;
+  const { id } = await params;
 
   let job: Job | null = null;
 
@@ -70,7 +70,7 @@ export default async function JobDetail({ params }: JobDetailProps) {
         <div>
           <p className="text-sm text-muted-foreground mb-1">Salary</p>
           <p className="font-semibold text-foreground">
-            $ {job.salaryRange || "Negotiable"}
+            {job.salaryRange || "Negotiable"}
           </p>
         </div>
         <div>
@@ -93,8 +93,8 @@ export default async function JobDetail({ params }: JobDetailProps) {
           Required Skills
         </h2>
         <div className="flex flex-wrap gap-2">
-          {Array.isArray(job.skillsRequired) &&
-            job.skillsRequired.map((skill: string, idx: number) => (
+          {job.skillsRequired &&
+            JSON.parse(job.skillsRequired).map((skill: string, idx: number) => (
               <span
                 key={idx}
                 className="px-3 py-1 bg-purple-50 text-purple-600 rounded-full text-sm"

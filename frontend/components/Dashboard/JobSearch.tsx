@@ -71,18 +71,20 @@ export default function JobSearch() {
                       {job.company} • {job.location}
                     </p>
                     <p className="mt-2 text-sm font-medium text-blue-600">
-                      $ {job.salaryRange}
+                      {job.salaryRange}
                     </p>
                     <div className="mt-3 flex flex-wrap gap-2">
-                      {Array.isArray(job?.skillsRequired) &&
-                        job.skillsRequired.map((skill: string, idx: number) => (
-                          <span
-                            key={idx}
-                            className="px-3 py-1 bg-purple-50 text-purple-600 rounded-full text-sm"
-                          >
-                            {skill}
-                          </span>
-                        ))}
+                      {job.skillsRequired &&
+                        JSON.parse(job.skillsRequired).map(
+                          (skill: string, idx: number) => (
+                            <span
+                              key={idx}
+                              className="px-3 py-1 bg-purple-50 text-purple-600 rounded-full text-sm"
+                            >
+                              {skill}
+                            </span>
+                          )
+                        )}
                     </div>
                   </div>
                   <Link href={`/jobs/${job.id}`}>

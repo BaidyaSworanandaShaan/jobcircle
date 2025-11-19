@@ -5,7 +5,7 @@ interface JobInput {
   location: string;
   company: string;
   jobType: "FULL_TIME" | "PART_TIME" | "INTERNSHIP" | "REMOTE";
-  skillsRequired: string[]; // Array of skills
+  skillsRequired: string; // Array of skills
   experience: string;
   salaryRange?: string;
   dueDate: Date;

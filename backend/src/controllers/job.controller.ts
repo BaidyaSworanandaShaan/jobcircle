@@ -28,7 +28,8 @@ export const postJob = async (req: Request, res: Response) => {
       description,
       location,
       jobType,
-      skillsRequired,
+      skillsRequired: JSON.stringify(skillsRequired),
+
       experience,
       salaryRange,
       dueDate: new Date(dueDate),
